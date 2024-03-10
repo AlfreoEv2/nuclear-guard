@@ -1,0 +1,11 @@
+-- GNAT Project File for the Ada Server Application
+-- This file configures the build settings for an Ada project using AWS (Ada Web Server).
+
+with "aws";
+
+project Server is
+   for Source_Dirs use ("src");
+   for Object_Dir use "build";
+   for Languages use ("Ada");
+   for Main use ("server.adb");
+end Server;

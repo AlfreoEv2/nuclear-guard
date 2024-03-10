@@ -1,20 +1,25 @@
-FROM debian:buster-slim
+# Use a base image with Ada and necessary tools installed
+FROM debian:bullseye
 
-# Install GNAT and GPRBuild
-RUN apt-get update && apt-get install -y gnat gprbuild
+# Install necessary packages
+RUN apt-get update && apt-get install -y \
+    gnat \
+    gprbuild \
+    libaws20-dev \
+    make \
+    && rm -rf /var/lib/apt/lists/*
 
 # Set the working directory in the container
 WORKDIR /app
 
-# Copy the Ada source code and GNAT project file into the container
-COPY hello_world.adb /app
-COPY hello_world.gpr /app
+# Copy your Ada application to the Docker image
+COPY . .
 
-# Create the directories needed for gprbuild to work
-RUN mkdir obj bin
+# Create the build directory as per the server.gpr configuration
+RUN mkdir -p build
 
 # Compile the Ada program
-RUN gprbuild hello_world.gpr
+RUN gprbuild -P server.gpr
 
-# Run the compiled Ada program
-ENTRYPOINT ["./bin/hello_world"]
+# The executable is named 'server' and located in the 'build' directory based on the gpr file
+ENTRYPOINT ["./build/server"]
